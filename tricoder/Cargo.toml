@@ -7,12 +7,20 @@ edition = "2024"
 anyhow = "1.0.102"
 rayon = "1.12.0"
 tokio = { version = "1.52.1", features = ["full"] }
-reqwest = { version = "0.13.2", default-features = false, features = [
-    "json",
-    "rustls-tls",
-] }
+reqwest = { version = "0.13.2", features = ["json"] }
 serde = { version = "1.0.228", features = ["derive"] }
 trust-dns-resolver = "0.23.2"
 futures = "0.3.32"
 tokio-stream = "0.1.18"
 thiserror = "2.0.18"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+strip = true
+opt-level = "z"
+overflow-checks = false
+lto = "fat"
+codegen-units = 1
+panic = "abort"
