@@ -6,3 +6,14 @@ edition = "2024"
 [dependencies]
 sha-1 = "0.10.1"
 hex = "0.4.3"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+strip = true
+opt-level = "z"
+overflow-checks = false
+lto = "fat"
+codegen-units = 1
+panic = "abort"
