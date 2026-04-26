@@ -9,10 +9,10 @@ use std::{collections::HashSet, time::Duration};
 use trust_dns_resolver::{
     AsyncResolver,
     config::{ResolverConfig, ResolverOpts},
-    name_server::{GenericConnection, GenericConnectionProvider, TokioRuntime},
+    name_server::{GenericConnector, TokioRuntimeProvider},
 };
 
-type DnsResolver = AsyncResolver<GenericConnection, GenericConnectionProvider<TokioRuntime>>;
+type DnsResolver = AsyncResolver<GenericConnector<TokioRuntimeProvider>>;
 
 pub async fn enumerate(http_client: &Client, target: &str) -> Result<Vec<Subdomain>, Error> {
     let entries: Vec<CrtShEntry> = http_client
@@ -25,8 +25,8 @@ pub async fn enumerate(http_client: &Client, target: &str) -> Result<Vec<Subdoma
     let mut dns_resolver_opts = ResolverOpts::default();
     dns_resolver_opts.timeout = Duration::from_secs(4);
 
-    let dns_resolver = AsyncResolver::tokio(ResolverConfig::default(), dns_resolver_opts)
-        .expect("subdomain resolver: building DNS client");
+    let dns_resolver = AsyncResolver::tokio(ResolverConfig::default(), dns_resolver_opts);
+
     let mut subdomains: HashSet<String> = entries
         .into_iter()
         .map(|entry| {
