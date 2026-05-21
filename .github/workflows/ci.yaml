@@ -31,3 +31,7 @@ jobs:
       - name: Build tricoder
         working-directory: tricoder
         run: cargo build
+
+      - name: Build crawler
+        working-directory: crawler
+        run: cargo build

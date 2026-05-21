@@ -20,7 +20,7 @@ async fn main() -> Result<(), anyhow::Error> {
                     .short('s')
                     .long("spider")
                     .help("The spider to run")
-                    .takes_value(true)
+                    .num_args(1)
                     .required(true),
             ),
         )
@@ -39,7 +39,7 @@ async fn main() -> Result<(), anyhow::Error> {
             println!("{}", name);
         }
     } else if let Some(matches) = cli.subcommand_matches("run") {
-        let spider_name = matches.value_of("spider").unwrap();
+        let spider_name = matches.get_one::<String>("spider").unwrap().as_str();
         let crawler = Crawler::new(Duration::from_millis(200), 2, 500);
 
         match spider_name {

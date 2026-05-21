@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-clap = "4.6.1"
+clap = { version = "4.6.1", features = ["cargo"] }
 tokio = { version = "1.52.3", features = ["full"] }
 reqwest = { version = "0.13.3", default-features = false, features = ["json"] }
 anyhow = "1.0"
@@ -20,3 +20,14 @@ fantoccini = { version = "0.22.1", default-features = false, features = ["rustls
 serde_json = "1.0.149"
 serde = { version = "1.0.228", features = ["derive"] }
 regex = "1.12.3"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+strip = true
+opt-level = "z"
+overflow-checks = false
+lto = "fat"
+codegen-units = 1
+panic = "abort"

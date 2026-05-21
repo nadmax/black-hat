@@ -50,6 +50,8 @@ impl Crawler {
             let _ = urls_to_visit_tx.send(url).await;
         }
 
+        log::info!("spider [{}] started", spider.name());
+
         self.launch_processors(
             processing_concurrency,
             spider.clone(),
@@ -96,6 +98,8 @@ impl Crawler {
         drop(urls_to_visit_tx);
 
         barrier.wait().await;
+
+        log::info!("spider [{}] finished", spider.name());
     }
 
     fn launch_processors<T: Send + 'static>(
@@ -138,7 +142,7 @@ impl Crawler {
                             .scrape(queued_url.clone())
                             .await
                             .map_err(|err| {
-                                log::error!("{}", err);
+                                log::error!("spider [{}] scrape error: {}", spider.name(), err);
                                 err
                             })
                             .ok();

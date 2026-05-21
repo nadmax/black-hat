@@ -61,18 +61,18 @@ impl super::Spider for CveDetailsSpider {
 
         let document = Document::from(http_res.as_str());
 
-        let rows = document.select(Attr("id", "vulnslisttable").descendant(Class("srrowns")));
+        let rows = document.find(Attr("id", "vulnslisttable").descendant(Class("srrowns")));
         for row in rows {
-            let mut columns = row.select(Name("td"));
+            let mut columns = row.find(Name("td"));
             let _ = columns.next();
-            let cve_link = columns.next().unwrap().select(Name("a")).next().unwrap();
+            let cve_link = columns.next().unwrap().find(Name("a")).next().unwrap();
             let cve_name = cve_link.text().trim().to_string();
             let cve_url = self.normalize_url(cve_link.attr("href").unwrap());
 
             let cwe = columns
                 .next()
                 .unwrap()
-                .select(Name("a"))
+                .find(Name("a"))
                 .next()
                 .map(|cwe_link| {
                     (
@@ -126,7 +126,7 @@ impl super::Spider for CveDetailsSpider {
         }
 
         let next_pages_links = document
-            .select(Attr("id", "pagingb").descendant(Name("a")))
+            .find(Attr("id", "pagingb").descendant(Name("a")))
             .filter_map(|n| n.attr("href"))
             .map(|url| self.normalize_url(url))
             .collect::<Vec<String>>();
@@ -135,8 +135,21 @@ impl super::Spider for CveDetailsSpider {
     }
 
     async fn process(&self, item: Self::Item) -> Result<(), Error> {
-        println!("{:?}", item);
-
+        println!("CVE:         {}", item.name);
+        println!("URL:         {}", item.url);
+        println!("Type:        {}", item.vulnerability_type);
+        println!("Score:       {}", item.score);
+        println!("Published:   {}", item.publish_date);
+        println!("Updated:     {}", item.update_date);
+        println!("CWE ID:      {}", item.cwe_id.as_deref().unwrap_or("N/A"));
+        println!("CWE URL:     {}", item.cwe_url.as_deref().unwrap_or("N/A"));
+        println!("Access:      {}", item.access);
+        println!("Complexity:  {}", item.complexity);
+        println!("Auth:        {}", item.authentication);
+        println!("Conf:        {}", item.confidentiality);
+        println!("Integrity:   {}", item.integrity);
+        println!("Availability:{}", item.availability);
+        println!();
         Ok(())
     }
 }
